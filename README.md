@@ -1,4 +1,5 @@
 # Curseforge Changelog Compiler
+This script scrapes changelogs from curseforge for any jars that are different in the new mod directory. The changelogs are then dumped in the file changelog.html
 
 ### Step 1: Creating a Google CSE
 1. Before starting anything, you **MUST** create a custom search engine.
