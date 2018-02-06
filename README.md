@@ -1,6 +1,8 @@
 # Curseforge Changelog Compiler
 This script scrapes changelogs from curseforge for any jars that are different in the new mod directory. The changelogs are then dumped in the file changelog.html
 
+## Make sure you have Python 3 installed! [You can get it here](https://www.python.org/downloads/). You MUST click 'Add Python to Environmental Variables' during the installation!
+
 ### Step 1: Creating a Google CSE
 1. Before starting anything, you **MUST** create a custom search engine.
    You can do this [here](https://cse.google.com/). The 'Sites to search' **MUST** be https://minecraft.curseforge.com/
