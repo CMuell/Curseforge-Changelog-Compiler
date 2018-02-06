@@ -1,0 +1,15 @@
+[keys]
+
+api_key = API_KEY
+cse_id = CSE_ID
+
+
+[mod_paths]
+
+path_old_ver = OLD_DIR
+path_new_ver = NEW_DIR
+
+
+[misc]
+
+modpack_name = MODPACK_NAME_VERSION
