@@ -13,3 +13,5 @@ This script scrapes changelogs from curseforge for any jars that are different i
 ***
 
 ## [Setup Instructions Here](https://github.com/CMuell/Curseforge-Changelog-Compiler/wiki/Setup)
+
+***
