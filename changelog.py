@@ -1,15 +1,20 @@
 # Written by https://www.reddit.com/user/CJDAM/
 # Written in Python 3
-import pip
-from backports import configparser
 
-reqParse = configparser.RawConfigParser()
-reqFilePath = r'required_modules.txt'
-reqParse.read(reqFilePath)
+import pip
+
+pip.main(['install', 'configparser==3.5.0'])
+
+from backports import configparser
 
 
 def install(package):
     pip.main(['install', package])
+
+
+reqParse = configparser.RawConfigParser()
+reqFilePath = r'required_modules.txt'
+reqParse.read(reqFilePath)
 
 
 for each_section in reqParse.sections():

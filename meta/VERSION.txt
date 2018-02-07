@@ -1,0 +1,5 @@
+--- 1.0.1 Changes:
+
+Issue #1 -
+A: Should be fixed, pip checks for the correct configparser installation (includes backports.configparser)
+B: changed run.bat to 'python changelog.py'

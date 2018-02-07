@@ -1,1 +1,1 @@
-start cmd /k py -m changelog.py
+start cmd /k python changelog.py
