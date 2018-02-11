@@ -1,5 +1,22 @@
 import re
 from bs4 import BeautifulSoup
+import inspect
+from difflib import SequenceMatcher
+from googleapiclient.discovery import build
+
+
+def google_search(term, api, cse, **kwargs):
+    service = build('customsearch', 'v1', developerKey=api)
+    result = service.cse().list(q=term, cx=cse, **kwargs).execute()
+    return result['items']
+
+
+def get_line():
+    return inspect.currentframe().f_back.f_lineno
+
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
 
 
 def ask_mode():
@@ -15,13 +32,14 @@ def ask_mode():
 
 
 def format_tags(response):
-    soup = BeautifulSoup(response, 'html.parser')
+
+    # soup = BeautifulSoup(response, 'html.parser')
 
     headerlist = {}
     contentlist = {}
     cnt = 0
 
-    for element in soup.find_all(class_='logbox'):
+    for element in response.find_all(class_='logbox'):
         for header in element.find_all('h3'):
             headerlist[cnt] = header
 
@@ -35,10 +53,11 @@ def format_tags(response):
 
 
 def strip_tags(response, modname):
-    soup = BeautifulSoup(response, 'html.parser')
-    soup = str(soup.find('div', class_='logbox'))
 
-    print(soup)
+    # CHANGE: response = soup = str(soup.find('div', class_='logbox'))
+    # print(response)
+
+    soup = BeautifulSoup(response, 'html.parser')
 
     h3_tag = soup.find('h3')
     ul_tag = soup.find('ul')
@@ -47,14 +66,25 @@ def strip_tags(response, modname):
         header = str(h3_tag)
         content = str(ul_tag)
         formatting = header + content
+        print('format_func.py line {}: IF'.format(get_line()))
+
     else:
         formatting = str(soup)
+        print('format_func.py line {}: ELSE'.format(get_line()))
 
-    formatting = re.sub('<p>|<p> \+|<p>\+|<p> \*|<p>\*', '\n- ', formatting)
-    formatting = re.sub('<li>', '\n- ', formatting)
+#    formatting = re.sub('<p>|<p> \+|<p>\+|<p> \*|<p>\*|<p>-', '\n- ', formatting)
+    if soup.find('li') is not None:
+        formatting = re.sub('<li>', '\n- ', formatting)
     formatting = re.sub('</p>', '', formatting)
     formatting = re.sub('<.*?>', '', formatting)
+    # Remove ' & [ characters
     name_format = re.sub('(\'|\[|])(?!\w\s)', '', modname)
-    formatting = '\n\n{0}\n-----{1}\n\n'.format(name_format, formatting)
+    changelog_entry = '\n\n' \
+                      '========================================\n' \
+                      '{}\n' \
+                      '========================================' \
+                      '{}'.format(name_format, formatting)
 
-    return formatting
+    print(changelog_entry)
+
+    return changelog_entry

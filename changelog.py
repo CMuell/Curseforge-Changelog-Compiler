@@ -3,7 +3,9 @@
 
 import format_func
 import pip
-
+# NEW -->
+from difflib import SequenceMatcher
+#
 pip.main(['install', 'configparser==3.5.0'])
 
 from backports import configparser
@@ -75,8 +77,15 @@ else:
     # Compares the two mod directories and returns unique files from the new version
     dcmp = dircmp(path_old, path_new)
     right_only = dcmp.right_only
-    # Separates the returned file names into individual strings
-    mod_array = str(right_only).split(',')
+
+    mod_dict = {}
+    i = 0
+
+    # Inserts key/value pairs into mod_dict (Integer:FileName)
+    for filename in right_only:
+        pair = {i: filename}
+        mod_dict.update(pair)
+        i += 1
 
     strip_tags = format_func.ask_mode()
 
@@ -88,21 +97,18 @@ else:
         print('Getting ' + name + '\n')
 
         # Initializes a new google search using the file name, api_key, cse_id. Returns first search result
-        new_search = google_search(name, api_key, cse_id, num=1)
+        new_search = google_search(search_term, api_key, cse_id, num=1)
 
         for search in new_search:
             # Retrieves the curseforge file link from the query
             res = search['link']
             # Opens the link and views the html
             response = urllib.request.urlopen(res)
-            response_html = response.read()
-
-            print(response_html)
 
             if strip_tags == 'no':
-                content = format_func.format_tags(response_html)
+                content = format_func.format_tags(response)
             elif strip_tags == 'yes':
-                content = format_func.strip_tags(response_html, name)
+                content = format_func.strip_tags(response, name)
 
             # Opens changelog.html to append the retrieved changelog to EOF
             file_object = open('changelog.txt', 'a')

@@ -1,7 +1,7 @@
 [keys]
 
-api_key = AIzaSyAcOpuxJKpft611UiNdPKVKQ8gFo3xQHok
-cse_id = 009536662673094263601:2vwo3b8ew0g
+api_key = AIzaSyBqMIGtPBnC4PyTk9KtPEmos6LSlqD43bA
+cse_id = 002744452652433331927:__meltwjzdc
 
 
 [mod_paths]
