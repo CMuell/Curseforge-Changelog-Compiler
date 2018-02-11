@@ -3,11 +3,13 @@ from filecmp import dircmp
 from bs4 import BeautifulSoup
 from urllib import request
 import format_func
+import time
+import sys
 
 from googleapiclient.discovery import build
 
-api_key = 'AIzaSyAcOpuxJKpft611UiNdPKVKQ8gFo3xQHok'
-cse_id = '009536662673094263601:2vwo3b8ew0g'
+api_key = ''
+cse_id = ''
 
 #######################
 
@@ -15,8 +17,8 @@ cse_id = '009536662673094263601:2vwo3b8ew0g'
 #print(json.dumps(new_search))
 #print(search_term)
 
-path_old = "C:\\Users\camoe\Documents\Curse\Minecraft\Instances\dir1\mods"
-path_new = "C:\\Users\camoe\Documents\Curse\Minecraft\Instances\dir2\mods"
+path_old = "C:\\Users\username\Documents\Curse\Minecraft\Instances\dir1\mods"
+path_new = "C:\\Users\username\Documents\Curse\Minecraft\Instances\dir2\mods"
 
 dcmp = dircmp(path_old, path_new)
 right_only = dcmp.right_only
@@ -96,9 +98,11 @@ for key, name in mod_dict.items():
                                     content = format_func.strip_tags(search_three, jar_name)
                             else:
                                 print(error_msg)
+                                time.sleep(2)
 
             else:
                 print(error_msg)
+                time.sleep(2)
 
             switch = True
 
