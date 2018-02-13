@@ -1,6 +1,7 @@
 # Written by https://www.reddit.com/user/CJDAM/
 # Written in Python 3
 
+import format_func
 import pip
 
 pip.main(['install', 'configparser==3.5.0'])
@@ -21,20 +22,12 @@ for each_section in reqParse.sections():
     for (each_key, each_val) in reqParse.items(each_section):
         install(each_val)
 
-import urllib.request
-import bs4
-import re
 from filecmp import dircmp
-from googleapiclient.discovery import build
+import logging
+logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
 import time
 import sys
-
-
-def google_search(term, api, cse, **kwargs):
-    service = build('customsearch', 'v1', developerKey=api)
-    result = service.cse().list(q=term, cx=cse, **kwargs).execute()
-    return result['items']
-
+import re
 
 # Parses data from 'config.txt'
 configParser = configparser.RawConfigParser()
@@ -66,56 +59,93 @@ if errors.__len__() > 0:
     sys.exit()
 
 else:
+    time.sleep(1)
+    strip_tags = format_func.ask_mode()
     # Creates the changelog.html file and writes the changelog title
-    new_file = open('changelog.html', 'w')
+    if strip_tags == 'no':
+        new_file = open('changelog.html', 'w')
+    else:
+        new_file = open('changelog.txt', 'w')
     new_file.write('<h1>{0} Changelog</h1>\n'.format(modpack_name))
     new_file.write('<p>Written by /u/CJDAM<p>')
     new_file.write('<br><br><br>')
     new_file.close()
 
-    # Compares the two mod directories and returns unique files from the new version
     dcmp = dircmp(path_old, path_new)
-    right_only = dcmp.right_only
-    # Separates the returned file names into individual strings
-    mod_array = str(right_only).split(',')
+    old_jars = dcmp.left_only
+    new_jars = dcmp.right_only
 
-    print('Working on it...\n')
+    sub = '\.jar'
+    old_jar_obj = format_func.list_to_object(old_jars, sub)
+    new_jar_obj = format_func.list_to_object(new_jars, sub)
+    search_jars = {}
 
-    # For each string in the mod_array list do the following:
-    for name in mod_array:
-        # Defines search_term as the current file name
-        search_term = name
+    key = 0
 
-        print('Getting ' + name + '\n')
+    # Fills the search_jars object with paired new/old mod versions
+    for k, newval in new_jar_obj.items():
 
-        # Initializes a new google search using the file name, api_key, cse_id. Returns first search result
-        new_search = google_search(name, api_key, cse_id, num=1)
+        new_cleaned = format_func.clean_string(newval, 'all')
+        count = 0
+        for ke, oldval in old_jar_obj.items():
 
-        for search in new_search:
-            # Retrieves the curseforge file link from the query
-            res = search['link']
-            # Opens the link and views the html
-            response = urllib.request.urlopen(res)
-            response_html = response.read()
-            soup = bs4.BeautifulSoup(response_html, 'html.parser')
-            # Searches for the 'logbox' class containing changelog information
-            logbox = soup.find('div', class_='logbox')
-            # Converts the retrieved information to a string
-            logbox = str(logbox)
-            # Some prettifying
-            logbox = re.sub('<h1>', '<h4>', logbox)
-            logbox = re.sub('</h1>', '</h4>', logbox)
-            logbox = re.sub('<h2>', '<h3>', logbox)
-            logbox = re.sub('</h2>', '<h3>', logbox)
+            old_cleaned = format_func.clean_string(oldval, 'all')
 
-            content = logbox
+            if new_cleaned in old_cleaned:
+                entry = {key: {'new': newval, 'old': oldval}}
+                search_jars.update(entry)
+                key += 1
+                break
+            else:
+                count += 1
+
+            if count > (len(old_jar_obj) - 1):
+                # Checked all old mods, new mod was not matched
+                entry = {key: {'new': newval, 'old': None}}
+                search_jars.update(entry)
+                key += 1
+
+    # Uses search_jars[i]['new'] in google search query
+
+    # For each search_jars object {'new':value, 'old':value}
+    for key, value in search_jars.items():
+
+        content = []
+
+        term = value['new']
+        # Do google search on minecraft.curseforge.com
+        search = format_func.google_search(term, api_key, cse_id, num=2)
+        # Parse link from search and format to projects/modname/files
+        link = format_func.find_link(search)
+
+        # If a valid link was found and formatted
+        if link is not None:
+            # Finds the versions container div
+            versions_div = format_func.find_in_link(link, 'div', 'listing-container')
+            # Gets all version link elements
+            versions = format_func.get_all_elem(versions_div, 'a', 'overflow-tip twitch-link')
+
+            log_links = format_func.compare_versions(versions, value['new'], value['old'])
+
+            for k, href in log_links.items():
+                changelog = format_func.find_in_link(href, 'div', 'logbox')
+                if strip_tags == 'no':
+                    content.extend(changelog)
+                elif strip_tags == 'yes':
+                    content.extend(format_func.strip_tags(changelog, k))
 
             # Opens changelog.html to append the retrieved changelog to EOF
-            file_object = open('changelog.html', 'a')
-            # Writes file name to changelog.html
-            file_object.write('<div>')
-            file_object.write('<h2>{0}</h2>\n'.format(name))
-            file_object.write('<p>{0}</p>\n'.format(content))
-            file_object.write('</div>')
-            file_object.write('<br><br>')
+            file_object = open('changelog.txt', 'a')
+            if strip_tags == 'yes':
+                for each in content:
+                    frmt = re.sub("('\[|]'|\[|])", '', each)
+                    file_object.write(frmt)
+            else:
+                header = '<h2>{}</h2>'.format(value['new'])
+                for each in content:
+                    file_object.write(each)
             file_object.close()
+
+    print('Finished!')
+    time.sleep(5)
+    sys.exit()

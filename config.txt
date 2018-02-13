@@ -12,4 +12,4 @@ path_new_ver = NEW_DIR
 
 [misc]
 
-modpack_name = MODPACK_NAME_VERSION
+modpack_name = `Modpack_Old_Version => Modpack_New_Version`

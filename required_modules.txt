@@ -6,3 +6,4 @@ uritemplate = uritemplate
 oauth2client = oauth2client
 bs4 = bs4
 google = google-api-python-client
+html5lib = html5lib
