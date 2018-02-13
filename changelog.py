@@ -130,15 +130,20 @@ else:
             for k, href in log_links.items():
                 changelog = format_func.find_in_link(href, 'div', 'logbox')
                 if strip_tags == 'no':
-                    print('Placeholder')
+                    content.extend(changelog)
                 elif strip_tags == 'yes':
                     content.extend(format_func.strip_tags(changelog, k))
 
             # Opens changelog.html to append the retrieved changelog to EOF
             file_object = open('changelog.txt', 'a')
-            for each in content:
-                frmt = re.sub("('\[|]'|\[|])", '', each)
-                file_object.write(frmt)
+            if strip_tags == 'yes':
+                for each in content:
+                    frmt = re.sub("('\[|]'|\[|])", '', each)
+                    file_object.write(frmt)
+            else:
+                header = '<h2>{}</h2>'.format(value['new'])
+                for each in content:
+                    file_object.write(each)
             file_object.close()
 
     print('Finished!')
