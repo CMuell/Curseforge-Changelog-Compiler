@@ -1,15 +1,15 @@
 [keys]
 
-api_key = AIzaSyBqMIGtPBnC4PyTk9KtPEmos6LSlqD43bA
-cse_id = 002744452652433331927:__meltwjzdc
+api_key = API_KEY
+cse_id = CSE_ID
 
 
 [mod_paths]
 
-path_old_ver = C:\Users\camoe\Documents\Curse\Minecraft\Instances\dir1\mods
-path_new_ver = C:\Users\camoe\Documents\Curse\Minecraft\Instances\dir2\mods
+path_old_ver = OLD_DIR
+path_new_ver = NEW_DIR
 
 
 [misc]
 
-modpack_name = FTB Revelation 1.4.0
+modpack_name = `Modpack_Old_Version => Modpack_New_Version`

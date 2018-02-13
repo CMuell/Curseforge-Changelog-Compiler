@@ -1,5 +1,18 @@
+==============================
+
+--- 1.0.2 Changes:
+
+- Modified (re-wrote) search logic to produce more consistent results
+- Each version of the mod since the previous modpack now has a changelog
+- Google API oauth2 logging silenced
+- Added html5lib dependency
+
+==============================
+
 --- 1.0.1 Changes:
 
 Issue #1 -
 A: Should be fixed, pip checks for the correct configparser installation (includes backports.configparser)
 B: changed run.bat to 'python changelog.py'
+
+==============================

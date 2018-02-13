@@ -3,9 +3,7 @@
 
 import format_func
 import pip
-# NEW -->
-from difflib import SequenceMatcher
-#
+
 pip.main(['install', 'configparser==3.5.0'])
 
 from backports import configparser
@@ -24,18 +22,12 @@ for each_section in reqParse.sections():
     for (each_key, each_val) in reqParse.items(each_section):
         install(each_val)
 
-import urllib.request
 from filecmp import dircmp
-from googleapiclient.discovery import build
+import logging
+logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
 import time
 import sys
-
-
-def google_search(term, api, cse, **kwargs):
-    service = build('customsearch', 'v1', developerKey=api)
-    result = service.cse().list(q=term, cx=cse, **kwargs).execute()
-    return result['items']
-
+import re
 
 # Parses data from 'config.txt'
 configParser = configparser.RawConfigParser()
@@ -67,51 +59,88 @@ if errors.__len__() > 0:
     sys.exit()
 
 else:
+    time.sleep(1)
+    strip_tags = format_func.ask_mode()
     # Creates the changelog.html file and writes the changelog title
-    new_file = open('changelog.txt', 'w')
+    if strip_tags == 'no':
+        new_file = open('changelog.html', 'w')
+    else:
+        new_file = open('changelog.txt', 'w')
     new_file.write('<h1>{0} Changelog</h1>\n'.format(modpack_name))
     new_file.write('<p>Written by /u/CJDAM<p>')
     new_file.write('<br><br><br>')
     new_file.close()
 
-    # Compares the two mod directories and returns unique files from the new version
     dcmp = dircmp(path_old, path_new)
-    right_only = dcmp.right_only
+    old_jars = dcmp.left_only
+    new_jars = dcmp.right_only
 
-    mod_dict = {}
-    i = 0
+    sub = '\.jar'
+    old_jar_obj = format_func.list_to_object(old_jars, sub)
+    new_jar_obj = format_func.list_to_object(new_jars, sub)
+    search_jars = {}
 
-    # Inserts key/value pairs into mod_dict (Integer:FileName)
-    for filename in right_only:
-        pair = {i: filename}
-        mod_dict.update(pair)
-        i += 1
+    key = 0
 
-    strip_tags = format_func.ask_mode()
+    # Fills the search_jars object with paired new/old mod versions
+    for k, newval in new_jar_obj.items():
 
-    # For each string in the mod_array list do the following:
-    for name in mod_array:
-        # Defines search_term as the current file name
-        search_term = name
+        new_cleaned = format_func.clean_string(newval, 'all')
+        count = 0
+        for ke, oldval in old_jar_obj.items():
 
-        print('Getting ' + name + '\n')
+            old_cleaned = format_func.clean_string(oldval, 'all')
 
-        # Initializes a new google search using the file name, api_key, cse_id. Returns first search result
-        new_search = google_search(search_term, api_key, cse_id, num=1)
+            if new_cleaned in old_cleaned:
+                entry = {key: {'new': newval, 'old': oldval}}
+                search_jars.update(entry)
+                key += 1
+                break
+            else:
+                count += 1
 
-        for search in new_search:
-            # Retrieves the curseforge file link from the query
-            res = search['link']
-            # Opens the link and views the html
-            response = urllib.request.urlopen(res)
+            if count > (len(old_jar_obj) - 1):
+                # Checked all old mods, new mod was not matched
+                entry = {key: {'new': newval, 'old': None}}
+                search_jars.update(entry)
+                key += 1
 
-            if strip_tags == 'no':
-                content = format_func.format_tags(response)
-            elif strip_tags == 'yes':
-                content = format_func.strip_tags(response, name)
+    # Uses search_jars[i]['new'] in google search query
+
+    # For each search_jars object {'new':value, 'old':value}
+    for key, value in search_jars.items():
+
+        content = []
+
+        term = value['new']
+        # Do google search on minecraft.curseforge.com
+        search = format_func.google_search(term, api_key, cse_id, num=2)
+        # Parse link from search and format to projects/modname/files
+        link = format_func.find_link(search)
+
+        # If a valid link was found and formatted
+        if link is not None:
+            # Finds the versions container div
+            versions_div = format_func.find_in_link(link, 'div', 'listing-container')
+            # Gets all version link elements
+            versions = format_func.get_all_elem(versions_div, 'a', 'overflow-tip twitch-link')
+
+            log_links = format_func.compare_versions(versions, value['new'], value['old'])
+
+            for k, href in log_links.items():
+                changelog = format_func.find_in_link(href, 'div', 'logbox')
+                if strip_tags == 'no':
+                    print('Placeholder')
+                elif strip_tags == 'yes':
+                    content.extend(format_func.strip_tags(changelog, k))
 
             # Opens changelog.html to append the retrieved changelog to EOF
             file_object = open('changelog.txt', 'a')
-            # Writes file name to changelog.txt
-            file_object.write(content)
+            for each in content:
+                frmt = re.sub("('\[|]'|\[|])", '', each)
+                file_object.write(frmt)
             file_object.close()
+
+    print('Finished!')
+    time.sleep(5)
+    sys.exit()
