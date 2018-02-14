@@ -1,6 +1,7 @@
 import re
 from bs4 import BeautifulSoup
 from urllib import request
+import json
 import inspect
 import html5lib
 from googleapiclient.discovery import build
@@ -10,9 +11,6 @@ def google_search(term, api, cse, **kwargs):
     service = build('customsearch', 'v1', developerKey=api)
     result = service.cse().list(q=term, cx=cse, **kwargs).execute()
     return result['items']
-
-
-# ===> TEST_FILE
 
 
 def list_to_object(alist, sub):
@@ -64,7 +62,7 @@ def find_link(search):
         return None
 
 
-def find_in_link(link, element, aclass=None):
+def find_in_link(link, element, aclass=None, mode='str'):
     req = request.urlopen(link)
     resp = BeautifulSoup(req, 'html5lib')
     if aclass is not None:
@@ -72,7 +70,10 @@ def find_in_link(link, element, aclass=None):
     else:
         find_in_resp = resp.find_all(element)
 
-    return str(find_in_resp)
+    if mode == 'str':
+        return str(find_in_resp)
+    elif mode == 'none':
+        return find_in_resp
 
 
 def get_all_elem(text, element, aclass=None):
@@ -169,9 +170,6 @@ def get_log_links(new_version, web_ver, old_ver=None):
         return links
 
 
-# ===>
-
-
 def ask_mode():
     while True:
         choice = input('Strip HTML Tags? [y/n]: ')
@@ -184,51 +182,72 @@ def ask_mode():
                 return 'no'
 
 
-def format_tags(response):
+def create_entry(entry, version):  # Processes each changelog format
 
-    # soup = BeautifulSoup(response, 'html.parser')
+    edit_me = None
 
-    headerlist = {}
-    contentlist = {}
-    cnt = 0
+    for e in entry:
 
-    for element in response.find_all(class_='logbox'):
-        for header in element.find_all('h3'):
-            headerlist[cnt] = header
+        edit_me = str(e)
 
-        for content in element.find_all('ul'):
-            contentlist[cnt] = content
+        edit_me = strip_tag_type('div', edit_me)  # Remove all <div> tags
 
-        cnt += 1
+        # If statements for tag formatting
+        if edit_me.find('ul') is not None:
+            edit_me = strip_tag_type('ul', edit_me)  # Remove all <ul> tags
+        if edit_me.find('li') is not None:
+            edit_me = strip_tag_type('li', edit_me, '<p class="row full">- ', 'opening')  # Replace opening <li> tags with <p class="row">
+            edit_me = strip_tag_type('li', edit_me, '</p>', 'closing')  # Replace closing </li> tags with </p>
+        if edit_me.find('p') is not None:
+            edit_me = re.sub('(<p>([^\w<])+)', '<p class="row full">- ', edit_me)  # Format all <p> tags to <p>-
 
-    print(headerlist[0])
-    print(contentlist[0])
+        edit_me = re.sub(' {2,}(?=<)', '', edit_me)
+
+        header = f'<h3>{version}:</h3><br>'
+        edit_me = f'<div class="sub-log" id="{version}" name="{version}">' + header + edit_me + '</div>'
+
+    # Join each edited string as one
+    return_str = edit_me
+    return return_str
 
 
-def strip_tags(response, version):
+def strip_tag_type(elem, target, rep='', mode='both'):
 
-    soup = BeautifulSoup(response, 'html5lib')
+    # Replace opening and closing tag
+    if mode == 'both':
+        this = re.sub('<(' + elem + '.*?|/' + elem + ')>', rep, target)
+    if mode == 'opening':
+        this = re.sub('<' + elem + '.+?>', rep, target)
+    if mode == 'closing':
+        this = re.sub('</' + elem + '>', rep, target)
 
-    h3_tag = soup.find('h3')
-    ul_tag = soup.find('ul')
+    return this
 
-    if h3_tag is not None and ul_tag is not None:
-        header = str(h3_tag)
-        content = str(ul_tag)
-        formatting = header + content
 
-    else:
-        formatting = str(soup)
+def create_stripped_entry(entry, version):
 
-    formatting = re.sub('<p>|<p> \+|<p>\+|<p> \*|<p>\*|<p>-', '- ', formatting)
-    if soup.find('li') is not None:
-        formatting = re.sub('<li>', '- ', formatting)
+    edit_me = None
 
-    formatting = re.sub('</p>', '', formatting)
-    formatting = re.sub('<.*?>', '', formatting)
+    for e in entry:
 
-    header = '====================\n{}\n====================\n'.format(version)
-    section = formatting
+        edit_me = str(e)
+
+        if edit_me.find('h3') is not None:
+            edit_me = strip_tag_type('h3', edit_me, '', 'opening')
+            edit_me = strip_tag_type('h3', edit_me, '\n', 'closing')
+
+        if edit_me.find('ul') is not None:
+            edit_me = strip_tag_type('ul', edit_me)
+
+        if edit_me.find('li') is not None:
+            edit_me = strip_tag_type('li', edit_me, '- ', 'opening')
+            edit_me = strip_tag_type('li', edit_me, '\n', 'closing')
+
+        edit_me = strip_tag_type('p', edit_me, '\n', 'closing')
+        edit_me = re.sub('<.*?>', '', edit_me)
+
+    header = '--------------------\n{}\n--------------------\n'.format(version)
+    section = edit_me
     footer = '\n\n'
 
     changelog_entry = header + section + footer

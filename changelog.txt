@@ -1,0 +1,1236 @@
+=-=-=-=-=-=-=-=-=-=- Test 1 => Test 2 Changelog -=-=-=-=-=-=-=-=-=-=
+written by reddit.com/user/CJDAM
+
+
+==================== ActuallyAdditions-1.12.2-r126 => ActuallyAdditions-1.12.2-r128 ====================
+--------------------
+ActuallyAdditions-1.12.2-r128
+--------------------
+
+                        http://ellpeck.de/actaddchangelog
+
+                        
+                    
+
+
+--------------------
+ActuallyAdditions-1.12.2-r127.jar
+--------------------
+
+                        http://ellpeck.de/actaddchangelog
+
+                        
+                    
+
+
+============================================================ AdvancedRocketry-1.12.2-1.2.6-42 => AdvancedRocketry-1.12.2-1.2.6-50 ====================
+--------------------
+AdvancedRocketry-1.12.2-1.2.6-50
+--------------------
+
+                        
+ Highly untested and may break world
+  
+  
+    -  possible fix for #1074
+
+
+    -  fix moon size
+
+
+    -  add advancements back in
+
+
+    -  fix rocket newline
+
+
+    -  update German translation, thanks Jummit!
+
+
+    -  fix newlines in locale
+
+
+    -  fix #1066, CMe
+
+
+    -  fix bug with O2 vent were the seal status was not properly set, add O2 tracing for finding leaks
+
+
+    -  make sure seal blocks unregister properly, fix for #1038
+
+
+    -  Update ru_RU.lang
+
+
+    -  Update ru_RU.lang
+
+Updated full russian desc. Added new items and corrected untranslated words.
+
+
+    -  remove spaces from biome names, resolve #1061
+
+
+    -  Massive localization changes, progress for #1012
+
+
+    -  implement #1052
+
+
+    -  fix #1056
+
+
+    -  fix for #1049
+
+
+    -  resolve #1044
+
+
+    -  possible fix for #911
+
+
+    -  attempt to fix NPE with buildcraft, #992, #972
+
+
+    -  Sneaky debug thingy you, scram
+
+
+    -  Curse this plauge of mispellings, die once and for all!  Tonight you will be struck down
+
+
+    -  fix #958
+
+
+    -  add localization for #960
+
+
+    -  resolve #925
+
+
+    -  handle and print debug for cable CME, addresses #1032
+
+
+    -  add support for itemCapability handlers for rockets, resolves #1001
+
+
+    -  fix getting booted from invs #1001
+
+
+    -  Rockets now notify landing pad when dismantled #1038
+
+
+    -  Add iridum ore gen option #964
+
+
+    -  fix #1031
+
+
+    -  fix #1029
+
+
+    -  Mitigate #1004 #941 #956 #816 #760, prevent world save in case of corruption
+
+
+    -  fix #1030
+
+
+    -  resolves #1023
+
+
+    -  sea level is 63 not 64
+
+
+    -  add config to change oceantype and sealevel
+
+
+    -  fix same world docking pads #1019
+
+
+    -  goto command no longer dumps players underground
+
+
+    -  Fix more null stack checks
+
+
+    -  fix #1019, fire rocket land event on clients
+
+
+    -  fix the fix for #1005 wrong load event
+
+
+    -  possible fix to #1005
+
+
+    -  fix mistake in fixing #1007 causing rockets to crash too, fix #1011
+
+
+    -  Commands can be used in console
+
+
+    -  add configurable power multiplier for oxygen vent, implements #1010
+
+
+    -  Fixes #1007
+
+
+    -  Biome Loader now uses resource locations for biomes
+
+
+    -  fix space elevator failing to update client
+
+
+    -  warp times now vary between planets
+
+
+    -  min battery size of 1
+
+
+    -  Update fr_FR.lang
+
+
+    -  Fixes #995 in vanilla dimensions and low gravity dimensions
+
+
+    -  Fix #998
+
+
+    -  fix chemical reactor crash in #999 and #997
+
+
+    -  fix typo, 4192, 4096 and 8192 had a baby somehow
+
+
+    -  Fix observatory #928
+
+
+    -  fix client method called on server in biomeScanner #985
+
+
+    -  Disable seal enchant recipe if oxygen is disabled
+
+
+    -  Move recipe registration to init from post init, possible fix for https://github.com/Darkosto/SevTech-Ages/issues/284
+
+
+    -  fix libvulpes dep
+
+
+    -  Adding the spaceBreathing enchant in the chemical reactor no longer removes existing NBT data, sorry for your loss of items MushroomDynamo
+
+
+    -  fix crash on client when in invalid space station location
+
+
+    -  Rethrow exceptions instead of calling System.exit
+
+With Forge, you're never supposed to call System.exit. It won't work anyway
+(they disable it), and even having it in your code makes a big warning in the
+log. Change this to the right way of dealing with a checked exception you
+can't just propagate: wrap it in an unchecked exception.
+
+
+    -  Fixes #961
+
+
+    -  Fix expand to grow for BB boxes
+
+
+    -  "expand" method name changed to "grow" in 1.12
+
+
+    -  update build data
+
+
+    -  Band-aid for chisel crash in #952
+
+
+    -  sync
+
+
+    -  remove need to get bambooShortPlanName
+
+
+    -  update curseforge task to have deobf jar and libvulpes dependency
+
+
+    -  move gradle tasks to one line
+
+
+    -  add curseforge upload task to Jenkinsfile
+
+
+    -  possible fix for #937
+
+
+    -  Fix snow on observetory
+
+
+    -  fixes #934
+
+
+    -  Avoiding lookup of GitHub issues (#936)
+
+Not looking for GitHub issue titles when creating changelog.
+
+
+    -  sync
+
+
+    -  Move block/item registration over to events, fix load order issues with libvulpes, fix #908
+
+
+    -  Add config for discovery probability
+
+
+    -  Add fuel indicator, #923
+
+
+    -  Prevent players from changing direction midflight, #923
+
+
+    -  fix nulls when should be checking for empty
+
+
+    -  update build number
+
+
+    -  Add thermite torches
+
+
+    -  fix datatype issue, i expect this from C, but not java
+
+
+    -  Add config to change number of blocks per tick during terraform #909
+
+
+    -  fix mining missions
+
+
+    -  Fix https://github.com/zmaster587/libVulpes/issues/25 locally O2 warning
+
+
+    -  fix misnamed function
+
+
+    -  Fix order of operations
+
+
+    -  potential fix for #917
+
+
+    -  fixes #916
+
+
+    -  change default biome IDs #910
+
+
+    -  Don't apply gravity to entities with no gravity
+
+entities with no gravity shouldn't have their gravity modified
+
+
+    -  Revert "fix biome registration for pumpkin"
+
+This reverts commit ffb38181c79109c659589884c7b5e78c541d705d.
+
+
+    -  Revert "Add holiday event"
+
+This reverts commit 308bae71576f47c39efcda58b6f842ec38b2fd43.
+
+
+    -  update textures for blast furnace
+
+
+    -  update build num
+
+
+    -  fix #875
+
+
+    -  Fix #892
+
+
+    -  fix biome registration for pumpkin
+
+
+    -  Add holiday event
+
+
+    -  remember the resources
+
+
+    -  possible fix for #883
+
+
+    -  fix #880
+
+
+    -  Fix insane speed in prec assembler #881
+
+
+    -  Fixes #885, Fix crash when trying to add recipe for mod compat where an ingot exists but a plate does not
+
+
+    -  fix #871
+
+
+    -  fix broken cartrige recipes, I blame datatypes
+
+
+    -  Fix fluid tooltips JEI
+
+
+    -  fixes the auto-genned recipes, removed the manual ones added last commit
+
+Currently seems to have a bug where it registers the ingot rolling twice
+though.
+
+
+    -  fixes a bunch of missing rolling machine recipes.
+
+
+    -  Add more documention to ASM calls
+
+
+    -  Fixes #860
+
+
+    -  Fix ASM mappings for 1.12.2
+
+
+    -  fixes reference to wrong inventory from previous commit.
+
+Also cleans up some un-needed imports.
+
+
+    -  Fixes some null references to itemstacks.
+
+
+    -  Build scripts for 1.12
+
+
+    -  re-arrange some ore dictionary and recipe stuff.
+
+this fixes an issue with precision assembler ore dictionary support for
+circuit making.
+
+
+    -  fixes some ore registry locations.
+
+This was causing some crashes due to where libvulpes registers items in
+the item registry events.  Should probably move the item and block
+registrtations here to the proper events as well.
+
+
+    -  fixes crashing while loading dedicated server, fixes some gravity issues
+
+fixes double gravity on overworld on dedicated servers, this fix might
+need to be reworked if ASM is used again for non-item gravity.
+
+
+    -  cleanup access transformers.
+
+Will figure out which will be needed later, currently Entity * seems to
+be sufficient in my tests.
+
+
+    -  remove some debug spam.
+
+
+    -  implement recipes for 1.12
+
+
+    -  make non-item gravity use update event instead of asm
+
+
+    -  initial update for 1.12
+
+
+    -  fix changelog
+
+
+  
+
+                        
+                    
+
+
+============================================================ Bookshelf-1.12.2-2.3.518 => Bookshelf-1.12.2-2.3.522 ====================
+--------------------
+Bookshelf-1.12.2-2.3.522
+--------------------
+
+                        
+- 
+
+
+                        
+                    
+
+
+--------------------
+Bookshelf-1.12.2-2.3.521.jar
+--------------------
+
+                        
+- 
+- 
+
+
+                        
+                    
+
+
+--------------------
+Bookshelf-1.12.2-2.3.520.jar
+--------------------
+
+                        
+- 
+- 
+
+
+                        
+                    
+
+
+--------------------
+Bookshelf-1.12.2-2.3.519.jar
+--------------------
+
+                        
+- 
+
+
+                        
+                    
+
+
+============================================================ None => Snad-1.12.1-1.7.09.16a ====================
+--------------------
+Snad-1.12.1-1.7.09.16a
+--------------------
+
+                        Initial update to 1.12.1
+
+                        
+                    
+
+
+============================================================ appliedenergistics2-rv5-stable-4 => appliedenergistics2-rv5-stable-5 ====================
+--------------------
+appliedenergistics2-rv5-stable-5
+--------------------
+
+                        Fixes #3288: Fixes various item rotations when held in 3rd person. - yueh
+Fixes #3304: Fixes some light level sync issues. - fscan
+Fixes #3315: Slightly more permissive checks for autocrafting for items with empty NBT tags. - yueh
+
+                        
+                    
+
+
+============================================================ base-1.12.2-3.5.0 => base-1.12.2-3.5.1 ====================
+--------------------
+base-1.12.2-3.5.1
+--------------------
+
+                        Fixes:
+
+  Crashes when using Arrays in MaterialDataPieces (Should fix the armor crashes)
+
+                        
+                    
+
+
+============================================================ binnie-mods-1.12.2-2.5.0.111 => binnie-mods-1.12.2-2.5.0.112 ====================
+--------------------
+binnie-mods-1.12.2-2.5.0.112
+--------------------
+
+                        Alpha version. Do not create a world you care about with this version, it may break things severely.
+Please help the project by trying it out and reporting issues here.
+    
+    
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            Improve tooltips on machines, show some basic help
+
+Close #216 make the help key configurable - mezz
+
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+    
+    
+    
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            Revert "Downgrade gradle to 2.14"
+
+This reverts commit f13bfc0a633a99713f9ee2fb1123f6c3c7d5ee96. - mezz
+
+            - 
+            - 
+            - 
+            - 
+            Revert "Update gradle to 4.1"
+
+This reverts commit f1e7a198e5e4d05d91107e5957cde34a6f9813df. - mezz
+
+            - 
+            - 
+            - 
+            - 
+            Fix #274 Fix stone hive generation, increase water hive generation.
+
+(Thanks to @p-schneider) - mezz
+
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            Convert anonymous inner classes to static inner classes.
+
+Should fix the build issue, which is caused by the bug described here:
+https://github.com/MinecraftForge/Srg2Source/pull/17 - mezz
+
+            - 
+            Remove ExtraTrees dependency from Botany
+
+Move shared code to a new Design library mod - mezz
+
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+    
+    
+    
+            - 
+    
+    
+    
+            - 
+    
+    
+    
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            Fix build script (#83)
+
+* Fix build.gradlew
+Added README.md
+
+* Fix
+
+* Fix build.gradle and README.md - Alexander Kornilov
+
+            Some reformat code for 1.11.2 source (#84)
+
+* Optimized imports
+
+* Some code reformat
+
+* Some refactoring and code reformat
+
+* Some code reformat - Alexander Kornilov
+
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            Move the strange block-scope class SpeciesList which was breaking S2S
+
+See https://github.com/MinecraftForge/Srg2Source/issues/18 - mezz
+
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            Resolve more client/server sided issues
+
+using Minecraft Development for IntelliJ IDEA plugin.
+https://plugins.jetbrains.com/idea/plugin/8327-minecraft-development - mezz
+
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            Removed an import
+
+This was accidentally moved over when I copied the line of code - Ross Kelso
+
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+    
+    
+    
+            - 
+    
+    
+    
+            - 
+            - 
+            - 
+            - 
+            Feature/code improve (#221)
+
+* Code improvement for genetics.api
+Code improvement for genetics.core
+Fix missed localization for info of Lab Stand
+* Code improvement for genetics.genetics package - Alexander Kornilov
+
+            Feature/refactoring (#211)
+
+* Some code improve readability for botany.ceramic package
+* Code improvement for botany.core package
+* Code improvement for botany.craftgui package
+* Fixed TextJustification from all code files
+* Code improvement for botany.farm package
+* Code improvement for botany.flower
+* Code improvement for root botany package
+Code improvement for botany.network package
+Code improvement for botany.proxypackage
+* Code improvement for botany.gargdening package
+Added missed localization for Soil Meter
+* Code improvement for botany.genetic package
+* Code improvement for botany.items package
+* Removed "// TODO fix deprecated" comment
+* Reformatted code by Forestry format settings
+* Reformat code with new format settings - Alexander Kornilov
+
+            Feature/refactoring (#207)
+
+* Fixed deprecated I18n usage
+* Code improve readability for botany.api package
+* Fix naming of templateAsGenome method params - Alexander Kornilov
+
+            - 
+            - 
+            - 
+    
+
+                        
+                    
+
+
+============================================================ careerbees-0.0.1 => careerbees-0.2.0 ====================
+--------------------
+careerbees-0.2.0
+--------------------
+
+                        - Add Bee-bee gun. Uses bees and honey to shoot bees. These bees will then perform their special effect on whatever they hit.
+
+- Add Honey-Smelter bees that make honeycomb ingots.
+
+- Add Ying/Yang essences.
+
+- Add recipes for bee armor and eternal frames.
+
+- Placing an item frame on a hive to create a filter for collecting bees and any item modification bees.
+
+                        
+                    
+
+
+--------------------
+Career Bees 0.1.0
+--------------------
+
+                        Add Mad Scientist bees and Quantum bees.
+
+Add Eternal frames.
+
+                        
+                    
+
+
+========================================
