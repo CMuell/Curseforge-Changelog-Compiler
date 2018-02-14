@@ -1,6 +1,6 @@
 ==============================
 
---- 1.0.2 Changes:
+--- 1.0.0a2 Changes:
 
 - Modified (re-wrote) search logic to produce more consistent results
 - Each version of the mod since the previous modpack now has a changelog
@@ -9,7 +9,7 @@
 
 ==============================
 
---- 1.0.1 Changes:
+--- 1.0.0a1 Changes:
 
 Issue #1 -
 A: Should be fixed, pip checks for the correct configparser installation (includes backports.configparser)
