@@ -6,8 +6,8 @@ This script scrapes changelogs from curseforge for any jars that are different i
 
 #### Current To Do:
 
-- `wip - dev branch` Add html tag stripping option, filter irrelevant changelogs that are output to changelog.html
-- `wip - dev branch` Standardize changelog.html styling -- minimal style processing is currently occuring
+- `done` ~~Add html tag stripping option, filter irrelevant changelogs that are output to changelog.html~~
+- `80% done` Standardize changelog.html styling -- minimal style processing is currently occuring
 - Add optional json output file
 ***
 
