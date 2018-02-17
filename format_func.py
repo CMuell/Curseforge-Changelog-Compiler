@@ -1,9 +1,8 @@
 import re
+import time
+import sys
 from bs4 import BeautifulSoup
 from urllib import request
-import json
-import inspect
-import html5lib
 from googleapiclient.discovery import build
 
 
@@ -11,6 +10,27 @@ def google_search(term, api, cse, **kwargs):
     service = build('customsearch', 'v1', developerKey=api)
     result = service.cse().list(q=term, cx=cse, **kwargs).execute()
     return result['items']
+
+
+def verify_config(api, cse, dir1, dir2):
+    error = []
+    if api == 'API_KEY':
+        error.append('api_key')
+    if cse == 'CSE_ID':
+        error.append('cse_id')
+    if dir1 == 'OLD_DIR':
+        error.append('path_old')
+    if dir2 == 'NEW_DIR':
+        error.append('path_new')
+
+    if error.__len__() > 0:
+        print('Please configure the following in config.txt:')
+        for err in error:
+            print(f'- {err}')
+        time.sleep(5)
+        sys.exit()
+    else:
+        return False
 
 
 def list_to_object(alist, sub):
@@ -56,7 +76,7 @@ def find_link(search):
     if 'link' in locals():
         # Format all links to: /projects/modname/files
         link = link.rsplit('files', 1)
-        link = '{}files'.format(link[0])
+        link = f'{link[0]}files'
         return link
     else:
         return None
@@ -87,7 +107,6 @@ def get_all_elem(text, element, aclass=None):
 
 
 def compare_versions(web_versions, new_version, old_version):
-
     new_found = False
     old_found = False
 
@@ -125,7 +144,6 @@ def compare_versions(web_versions, new_version, old_version):
 
 
 def get_log_links(new_version, web_ver, old_ver=None):
-
     base_url = 'https://minecraft.curseforge.com'
     links = {}
 
@@ -135,7 +153,7 @@ def get_log_links(new_version, web_ver, old_ver=None):
             compare_with = str(clean_string(compare_with, 'special'))
             new_ver = str(clean_string(new_version, 'special'))
             if new_ver in compare_with:
-                entry = {new_version: '{}{}'.format(base_url, a_tag['href'])}
+                entry = {new_version: f'{base_url}{a_tag["href"]}'}
                 links.update(entry)
                 break
 
@@ -155,14 +173,14 @@ def get_log_links(new_version, web_ver, old_ver=None):
             old_ver = str(clean_string(old_ver, 'special'))
             if new_ver in compare_with and new_found is False:
                 new_found = True
-                entry = {new_version: '{}{}'.format(base_url, a_tag['href'])}
+                entry = {new_version: f'{base_url}{a_tag["href"]}'}
                 links.update(entry)
                 count += 1
             elif new_found is True and old_found is False:
                 if old_ver in compare_with:
                     break
                 else:
-                    entry = {a_tag['data-name']: '{}{}'.format(base_url, a_tag['href'])}
+                    entry = {a_tag['data-name']: f'{base_url}{a_tag["href"]}'}
                     links.update(entry)
                     count += 1
 
@@ -185,47 +203,77 @@ def ask_mode():
 def create_entry(entry, version):  # Processes each changelog format
 
     edit_me = None
+    base_name = clean_string(version, 'all')
 
-    for e in entry:
+    # For mods that include 20 changelogs on 1 page (I hate you)
+    # Show most recent changelog, delete from second <h3> onward
+    if base_name == 'forestry':
+        edit_me = str(entry[0])
+        soup = BeautifulSoup(edit_me, 'html5lib')
 
-        edit_me = str(e)
-
-        edit_me = strip_tag_type('div', edit_me)  # Remove all <div> tags
-
-        # If statements for tag formatting
-        if edit_me.find('ul') is not None:
-            edit_me = strip_tag_type('ul', edit_me)  # Remove all <ul> tags
-        if edit_me.find('li') is not None:
-            edit_me = strip_tag_type('li', edit_me, '<p class="row full">- ', 'opening')  # Replace opening <li> tags with <p class="row">
-            edit_me = strip_tag_type('li', edit_me, '</p>', 'closing')  # Replace closing </li> tags with </p>
-        if edit_me.find('p') is not None:
-            edit_me = re.sub('(<p>([^\w<])+)', '<p class="row full">- ', edit_me)  # Format all <p> tags to <p>-
-
+        # Deletes everything including and after second <h3></h3> (wrong version)
+        delete_from_here = soup.select_one('h3:nth-of-type(2)')
+        edit_me = re.sub('(' + str(delete_from_here) + ')([\s\S]*)', '', edit_me)
+        # Table row/cell formatting
+        edit_me = strip_tag_type('h3', edit_me)
+        edit_me = strip_tag_type('div', edit_me)
+        edit_me = strip_tag_type('ul', edit_me)
+        edit_me = strip_tag_type('li', edit_me, '<tr class="text-row"><td class="text-cell">', 'opening')
+        edit_me = strip_tag_type('li', edit_me, '</th></tr>', 'closing')
+        edit_me = strip_tag_type('p', edit_me, '<tr class="text-row"><td class="text-cell>', 'opening')
+        edit_me = strip_tag_type('p', edit_me, '</th></tr>', 'closing')
+        # Replaces 2+ consecutive spaces with single space (for visuals)
         edit_me = re.sub(' {2,}(?=<)', '', edit_me)
 
-        header = f'<h3>{version}:</h3><br>'
-        edit_me = f'<div class="sub-log" id="{version}" name="{version}">' + header + edit_me + '</div>'
+        sub_header = f'<h3 class="sub-header">{version}</h3>'
+        table = f'<table class="sub-log-table">{edit_me}</table>'
+        mod_div = f'<div class="sub-log" id="{version}">' + sub_header + table + '</div>'
 
-    # Join each edited string as one
-    return_str = edit_me
-    return return_str
+        return_str = mod_div
+        return return_str
+
+    else:
+        for e in entry:
+
+            edit_me = str(e)
+            edit_me = strip_tag_type('div', edit_me)  # Remove all <div> tags
+
+            edit_me = strip_tag_type('h1', edit_me)  # Remove all <h1> tags
+            edit_me = strip_tag_type('h2', edit_me)  # Remove all <h2> tags
+            edit_me = strip_tag_type('h3', edit_me)  # Remove all <h3> tags
+            edit_me = strip_tag_type('ul', edit_me)  # Remove all <ul> tags
+            edit_me = strip_tag_type('li', edit_me, '<tr class="text-row"><td class="text-cell">', 'opening')  # Replace opening <li> tags with <tr><td>
+            edit_me = strip_tag_type('li', edit_me, '</td></tr>', 'closing')  # Replace closing </li> tags with </td></tr>
+            edit_me = re.sub('(<p>([^\w<])+|<p>)', '<tr class="text-row"><td class="text-cell">', edit_me)  # Format all <p> to <tr><td>
+            edit_me = re.sub('</p>', '</td></tr>', edit_me)
+
+            edit_me = re.sub(' {2,}(?=<)', '', edit_me)  # Remove double spaces
+
+            sub_header = f'<h3 class="sub-header">{version}</h3>'
+            table = f'<table class="sub-log-table">{edit_me}</table>'
+            mod_div = f'<div class="sub-log" id="{version}">' + sub_header + table + '</div>'
+
+            return_str = mod_div
+            return return_str
 
 
 def strip_tag_type(elem, target, rep='', mode='both'):
-
     # Replace opening and closing tag
     if mode == 'both':
         this = re.sub('<(' + elem + '.*?|/' + elem + ')>', rep, target)
-    if mode == 'opening':
-        this = re.sub('<' + elem + '.+?>', rep, target)
-    if mode == 'closing':
+    elif mode == 'opening':
+        this = re.sub('<' + elem + '.*?>', rep, target)
+    elif mode == 'closing':
         this = re.sub('</' + elem + '>', rep, target)
+    else:
+        print(f'Invalid argument [4: {mode}] in strip_tag_type')
+        time.sleep(2)
+        sys.exit()
 
     return this
 
 
 def create_stripped_entry(entry, version):
-
     edit_me = None
 
     for e in entry:
@@ -246,10 +294,79 @@ def create_stripped_entry(entry, version):
         edit_me = strip_tag_type('p', edit_me, '\n', 'closing')
         edit_me = re.sub('<.*?>', '', edit_me)
 
-    header = '--------------------\n{}\n--------------------\n'.format(version)
+    header = f'--------------------\n{version}\n--------------------\n'
     section = edit_me
     footer = '\n\n'
 
     changelog_entry = header + section + footer
 
     return changelog_entry
+
+
+def this_style():
+    style = '\n<style>' \
+            '\nhtml {background-color:#d9d9d9; padding: 0px; margin: 0 auto; width: 100%; position: absolute; ' \
+            'font-family:Arial, Helvetica, sans-serif} ' \
+            '\n.mod-log {padding: 2em; text-align: justify; position: relative; display: inline-block; ' \
+            'width: 50%; background-color:  #FCFCFC; border: 1px solid #F4F4F4;} ' \
+            '\n.mod-log-header {padding-bottom:0.5em; border-bottom:2px solid #d9d9d9; color:#404040;}' \
+            '\nth, h3 {color:#404040}' \
+            '\ntable {margin-top:2em}' \
+            '\ntr:nth-child(even) {background-color:#f2f2f2}' \
+            '\nth, td {padding:0.5em; text-align:left}' \
+            '\n.container {position: relative; width: 100%;} ' \
+            '\n.filler {position: relative; display: inline-block; width: 25%;} ' \
+            '\n.title {padding: 2em; text-align: center; position: relative; display: inline-block; width: 50%}' \
+            '\n</style>'
+
+    return style
+
+
+def this_header(config_mn, strip):
+
+    if strip == 'no':
+        header = '\n<div class="filler">&nbsp</div>' \
+                 '\n<div class="title" id="changelog_title" name="changelog_title">' \
+                 f'\n<h1>{config_mn} Changelog</h1>' \
+                 '\n<a href="https://www.reddit.com/user/CJDAM/"><sup>made by /u/CJDAM</sup></a>' \
+                 '\n</div>' \
+                 '\n<div class="filler">&nbsp</div><br><br>'
+        return header
+
+    elif strip == 'yes':
+        header = f'=-=-=-=-=-=-=-=-=-=- {config_mn} Changelog -=-=-=-=-=-=-=-=-=-=' \
+                 '\nmade by /u/CJDAM' \
+                 '\n\n\n'
+        return header
+
+    else:
+        print('Invalid argument: this_header(arg1, ->arg2<- )')
+        print('[yes/no] are accepted strings for arg2')
+        print(f'Your input: {strip}')
+        time.sleep(2)
+        sys.exit()
+
+
+def write_entry_to_file(new_version, old_version, logs):
+
+    base_name = clean_string(new_version, 'all')
+
+    if base_name == 'forestry':
+        logs = logs[0]
+
+    else:
+        logs = '<br>'.join(logs)
+
+    name_word = clean_string(new_version, 'all')
+
+    entry = '\n<div class="container">' \
+            '\n<div class="filler">&nbsp</div>' \
+            f'\n<div class="mod-log" id={name_word}>' \
+            f'\n<h2 class="mod-log-header" id={name_word}-header>' \
+            f'{old_version} => {new_version}</h2>' \
+            f'\n{logs}</div>' \
+            '\n<div class="filler">&nbsp</div>' \
+            '\n</div>' \
+            '<br>'
+
+    return entry

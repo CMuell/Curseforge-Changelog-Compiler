@@ -22,12 +22,12 @@ for each_section in reqParse.sections():
         install(each_val)
 
 from filecmp import dircmp
-import logging
+from logging import getLogger, ERROR
 
-logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
+getLogger('googleapiclient.discovery_cache').setLevel(ERROR)  # Disables annoying Google API logging errors
+
 import time
 import sys
-import re
 
 # Parses data from 'config.txt'
 configParser = configparser.RawConfigParser()
@@ -40,37 +40,21 @@ cse_id = configParser.get('keys', 'cse_id')
 path_old = configParser.get('mod_paths', 'path_old_ver')
 path_new = configParser.get('mod_paths', 'path_new_ver')
 modpack_name = configParser.get('misc', 'modpack_name')
-errors = []
 
-if api_key == 'API_KEY':
-    errors.append('api_key')
-if cse_id == 'CSE_ID':
-    errors.append('cse_id')
-if path_old == 'OLD_DIR':
-    errors.append('path_old')
-if path_new == 'NEW_DIR':
-    errors.append('path_new')
+errors = format_func.verify_config(api_key, cse_id, path_old, path_new)
 
-if errors.__len__() > 0:
-    print('Please configure the following in config.txt:')
-    for error in errors:
-        print('- {0}'.format(error))
-    time.sleep(5)
-    sys.exit()
-
-else:
+if errors is False:
     time.sleep(1)
     strip_tags = format_func.ask_mode()
     # Creates the changelog.html file and writes the changelog title
     if strip_tags == 'no':
         new_file = open('changelog.html', 'w')
-        new_file.write(f'<h1>{modpack_name} Changelog</h1>\n')
-        new_file.write('<p>Written by /u/CJDAM<p>')
-        new_file.write('<br><br><br>')
+        new_file.write(format_func.this_style())
+        new_file.write(format_func.this_header(modpack_name, strip_tags))
+
     else:
         new_file = open('changelog.txt', 'w')
-        new_file.write(f'=-=-=-=-=-=-=-=-=-=- {modpack_name} Changelog -=-=-=-=-=-=-=-=-=-=\n')
-        new_file.write('written by reddit.com/user/CJDAM\n\n\n')
+        new_file.write(format_func.this_header(modpack_name, strip_tags))
 
     new_file.close()
 
@@ -129,35 +113,34 @@ else:
             log_links = format_func.compare_versions(versions, value['new'], value['old'])
 
             log_list = []
+            if log_links is not None:
+                for k, href in log_links.items():
+                    changelog = format_func.find_in_link(href, 'div', 'logbox', 'none')
+                    # print(changelog)
+                    if strip_tags == 'no':
 
-            for k, href in log_links.items():
-                changelog = format_func.find_in_link(href, 'div', 'logbox', 'none')
-                if strip_tags == 'no':
+                        entry = changelog
+                        output = format_func.create_entry(entry, k)
+                        log_list.append(output)
+                        # Take entry and use it in create_entry directly
+                        # Use k as the changelog version
+                        # Append output to list before `for loop`
+                        # final_string = ' '.join(list)
 
-                    entry = changelog
-                    output = format_func.create_entry(entry, k)
-                    log_list.append(output)
-                    # Take entry and use it in create_entry directly
-                    # Use k as the changelog version
-                    # Append output to list before `for loop`
-                    # final_string = ' '.join(list)
+                    elif strip_tags == 'yes':
 
-                elif strip_tags == 'yes':
-
-                    output = format_func.create_stripped_entry(changelog, k)
-                    log_list.append(output)
+                        output = format_func.create_stripped_entry(changelog, k)
+                        log_list.append(output)
+            else:
+                log_error = '<h4>This version could not be found on CurseForge</h4>'
+                log_list.append(log_error)
 
             # Opens changelog.html to append the retrieved changelog to EOF
             if strip_tags == 'no':
                 file_object = open('changelog.html', 'a')
-                modname_clean = format_func.clean_string(value['new'], 'special')
-                mod_header = f'<div class="mod-log" id={modname_clean}>' \
-                             f'<h2 class="mod-log-header" id={modname_clean}-header>{value["old"]} => {value["new"]}</h2>'
-                mod_body = '<br>'.join(log_list)
-                mod_footer = '</div><br><br>'
-
-                final_entry = mod_header + mod_body + mod_footer
+                final_entry = format_func.write_entry_to_file(value['new'], value['old'], log_list)
                 file_object.write(final_entry)
+                # print(final_entry)
 
             elif strip_tags == 'yes':
                 file_object = open('changelog.txt', 'a')
